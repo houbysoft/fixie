@@ -11,7 +11,7 @@ class FixieTokenizer {
     
     private:
         std::string stripComments(std::string input);
-        std::string tokenize(std::string input);
+        std::vector<std::string> *tokenize(std::string input);
 };
 
 #endif

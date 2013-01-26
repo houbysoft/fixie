@@ -1,6 +1,7 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/xpressive/xpressive.hpp>
 #include <iostream>
+#include <vector>
 #include "fixTokenizer.h"
 
 #ifdef UNIT_TESTING
@@ -9,7 +10,10 @@ public main(int argc, char** argv) {
 #endif
 
 FixieTokenizer::FixieTokenizer(std::string input) {
-    tokenize(stripComments(input));
+    std::vector<std::string> *tokenized = tokenize(stripComments(input));
+    for (int i = 0; i < tokenized->size(); i++) {
+        std::cout << tokenized->at(i) << std::endl;
+    }
 }
 
 /*
@@ -54,15 +58,18 @@ std::string FixieTokenizer::stripComments(std::string input) {
 /*
  * Tokenizes the code, assumed to have been cleaned of all comments
  */
-std::vector<std::string> FixieTokenizer::tokenize(std::string input) {
+std::vector<std::string> *FixieTokenizer::tokenize(std::string input) {
+    std::vector<std::string> *result = new std::vector<std::string>();
     boost::xpressive::sregex re = boost::xpressive::sregex::compile("[0-9a-zA-Z]+");
 
     //Iterate over all the words in the input
 
     boost::xpressive::sregex_token_iterator begin( input.begin(), input.end(), re ), end;
 
-    //Print out all the words
-    
-    //std::ostream_iterator< std::string > out_iter( std::cout, "\n" );
-    //std::copy( begin, end, out_iter );
+    for (; begin != end; ++begin) {
+        result->push_back(*begin);
+    }
+
+    return result;
 }
+
