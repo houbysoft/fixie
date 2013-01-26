@@ -56,7 +56,7 @@ std::string FixieTokenizer::stripComments(std::string input) {
  */
 std::vector<std::string> *FixieTokenizer::tokenize(std::string input) {
     std::vector<std::string> *result = new std::vector<std::string>();
-    boost::xpressive::sregex re = boost::xpressive::sregex::compile("[0-9a-zA-Z]+");
+    boost::xpressive::sregex re = boost::xpressive::sregex::compile("[0-9a-zA-Z(\\\\\\\")]+|\"|\'|;|=|\\*|\\.|\\||\\|\\||&&|\\(|\\)|\\[|\\]|\\+|-|\\\\|\\/|\\*|\\?|\\$|\\^");
 
     //Iterate over all the words in the input
 
