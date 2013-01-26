@@ -115,7 +115,7 @@ std::vector<std::string> *FixieTokenizer::chunk(std::string input) {
 
      */
 
-    boost::xpressive::sregex re = boost::xpressive::sregex::compile("[0-9a-zA-Z]+|\"|\'|;|=|\\*|\\.||\\|\\||&&|\\(|\\)|\\[|\\]|\\+|-|\\\\|\\/|\\*|\\?|\\$|\\^");
+    boost::xpressive::sregex re = boost::xpressive::sregex::compile("[0-9a-zA-Z]+|\"|\'|;|=|\\*|\\.|\\|\\||&&|\\(|\\)|\\[|\\]|\\+|-|\\\\|\\/|\\*|\\?|\\$|\\^");
 
     //Iterate over all the matches in the input
 
