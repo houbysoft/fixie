@@ -23,6 +23,29 @@ FixieTokenizer::FixieTokenizer() {
 }
 
 /*
+ * Tokenize a file, and return a vector of tokens
+ */
+std::vector<FixieTokenizer::token> *FixieTokenizer::tokenize(std::ifstream *file) {
+    std::vector<FixieTokenizer::token> *tokens = new std::vector<FixieTokenizer::token>();
+    std::string line;
+    int lineNumber = 0;
+
+    //Read off the lines into the tokenizer
+
+    while (file->good()) {
+        lineNumber++;
+        getline(*file,line);
+
+        //The tokenizer takes a vector as an argument, and 
+        //pumps its tokens into that vector
+
+        tokenizeLine(lineNumber,line,tokens);
+    }
+
+    return tokens;
+}
+
+/*
  * Tokenize takes a line number and an input string to tokenize. Will return
  * a vector of tokens with this line number noted in their values.
  */
@@ -99,10 +122,6 @@ std::string FixieTokenizer::stripComments(std::string input) {
     return res;
 }
 
-#undef NO_COMMENTS_IN_PROGRESS
-#undef WAITING_FOR_NEWLINE
-#undef INSIDE_MULTILINE_COMMENT
-
 /*
  * Tokenizes the code, assumed to have been cleaned of all comments
  */
@@ -137,3 +156,6 @@ std::vector<std::string> *FixieTokenizer::chunk(std::string input) {
     return result;
 }
 
+#undef NO_COMMENTS_IN_PROGRESS
+#undef WAITING_FOR_NEWLINE
+#undef INSIDE_MULTILINE_COMMENT

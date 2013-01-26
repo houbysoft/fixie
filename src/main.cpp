@@ -1,6 +1,5 @@
 #include <iostream>
 #include <fstream>
-#include <streambuf>
 #include <string>
 #include "fixieTokenizer.h"
 
@@ -28,25 +27,12 @@ int main(int argc, char **argv) {
         //Set up the tokenizer and our necessary variables
 
         FixieTokenizer *tokenizer = new FixieTokenizer();
-        std::vector<FixieTokenizer::token> *tokens = new std::vector<FixieTokenizer::token>();
-        std::string line;
-        int lineNumber = 0;
-
-        //Read off the lines into the tokenizer
-
-        while (file.good()) {
-            lineNumber++;
-            getline(file,line);
-
-            //The tokenizer takes a vector as an argument, and 
-            //pumps its tokens into that vector
-
-            tokenizer->tokenizeLine(lineNumber,line,tokens);
-        }
+        std::vector<FixieTokenizer::token> *tokens = tokenizer->tokenize(&file);
 
         //If we're testing we read off our line numbers and chunks
 
         if (TESTING) {
+            std::cout << std::endl << "TOKENS LIST:" << std::endl;
             for (int i = 0; i < tokens->size(); i++) {
                 std::cout << tokens->at(i).lineNumber << ": " << tokens->at(i).string << std::endl;
             }
