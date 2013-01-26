@@ -1,3 +1,4 @@
+#include <boost/algorithm/string.hpp>
 #include "fixTokenizer.h"
 
 #ifdef UNIT_TESTING
