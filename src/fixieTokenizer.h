@@ -10,12 +10,19 @@
 
 class FixieTokenizer {
     public:
-        FixieTokenizer(std::string input);
+        FixieTokenizer();
         ~FixieTokenizer() {};
+
+        typedef struct {
+            std::string string;
+            int lineNumber;
+        } token;
+
+        void tokenize(int lineNumber, std::string input, std::vector<token> *tokenized);
     
     private:
         std::string stripComments(std::string input);
-        std::vector<std::string> *tokenize(std::string input);
+        std::vector<std::string> *chunk(std::string input);
 };
 
 #endif
