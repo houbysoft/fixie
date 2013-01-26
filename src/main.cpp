@@ -39,7 +39,7 @@ int main(int argc, char **argv) {
             //The tokenizer takes a vector as an argument, and 
             //pumps its tokens into that vector
 
-            tokenizer->tokenize(lineNumber,line,tokens);
+            tokenizer->tokenizeLine(lineNumber,line,tokens);
         }
 
         //Here we just read off the result for testing

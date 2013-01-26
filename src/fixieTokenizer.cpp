@@ -5,17 +5,25 @@ public main(int argc, char** argv) {
 }
 #endif
 
+#define NO_COMMENTS_IN_PROGRESS 0
+#define WAITING_FOR_NEWLINE 1
+#define INSIDE_MULTILINE_COMMENT 2
+
 /*
  * Basic empty constructor
  */
 FixieTokenizer::FixieTokenizer() {
+
+    //set up our comment state
+
+    commentState = NO_COMMENTS_IN_PROGRESS;
 }
 
 /*
  * Tokenize takes a line number and an input string to tokenize. Will return
  * a vector of tokens with this line number noted in their values.
  */
-void FixieTokenizer::tokenize(int lineNumber, std::string input, std::vector<FixieTokenizer::token> *tokenized) {
+void FixieTokenizer::tokenizeLine(int lineNumber, std::string input, std::vector<FixieTokenizer::token> *tokenized) {
 
     //Gets the chunks of the string
 
@@ -34,15 +42,10 @@ void FixieTokenizer::tokenize(int lineNumber, std::string input, std::vector<Fix
     }
 }
 
-#define NO_COMMENTS_IN_PROGRESS 0
-#define WAITING_FOR_NEWLINE 1
-#define INSIDE_MULTILINE_COMMENT 2
-
 /*
  * Clears out all the comments from a code input
  */
 std::string FixieTokenizer::stripComments(std::string input) {
-    int mode = NO_COMMENTS_IN_PROGRESS;
 
     // Simple finite state machine for clearing out comments
 
@@ -51,15 +54,15 @@ std::string FixieTokenizer::stripComments(std::string input) {
 
         // If no comments are in progress, wait for something to trigger a jump
 
-        if (mode == NO_COMMENTS_IN_PROGRESS) {
+        if (commentState == NO_COMMENTS_IN_PROGRESS) {
             if (input[i] == '/' && i+1 < input.size() && input[i+1] == '/') {
-                mode = WAITING_FOR_NEWLINE;
+                commentState = WAITING_FOR_NEWLINE;
                 i++;
                 continue;
             }
         
             if (input[i] == '/' && i+1 < input.size() && input[i+1] == '*') {
-                mode = INSIDE_MULTILINE_COMMENT;
+                commentState = INSIDE_MULTILINE_COMMENT;
                 i++;
                 continue;
             }
@@ -70,17 +73,17 @@ std::string FixieTokenizer::stripComments(std::string input) {
 
         // If we've encountered a '//' comment, wait for a newline
         
-        else if (mode == WAITING_FOR_NEWLINE) {
+        else if (commentState == WAITING_FOR_NEWLINE) {
             if (input[i] == '\n') {
-                mode = NO_COMMENTS_IN_PROGRESS;
+                commentState = NO_COMMENTS_IN_PROGRESS;
             }
         } 
         
         // If we've encountered a '/**/' comment, wait for the '*/'
 
-        else if (mode == INSIDE_MULTILINE_COMMENT) {
+        else if (commentState == INSIDE_MULTILINE_COMMENT) {
             if (input[i] == '*' && i+1 < input.size() && input[i+1] == '/') {
-                mode = NO_COMMENTS_IN_PROGRESS;
+                commentState = NO_COMMENTS_IN_PROGRESS;
                 i++;
             }
         }

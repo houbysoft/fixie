@@ -18,11 +18,15 @@ class FixieTokenizer {
             int lineNumber;
         } token;
 
-        void tokenize(int lineNumber, std::string input, std::vector<token> *tokenized);
+        void tokenizeLine(int lineNumber, std::string input, std::vector<token> *tokenized);
     
     private:
         std::string stripComments(std::string input);
         std::vector<std::string> *chunk(std::string input);
+        
+        //Allows multiline comment persistence across multiple calls to tokenizeLine
+
+        int commentState;
 };
 
 #endif
