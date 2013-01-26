@@ -2,6 +2,7 @@
 #include <fstream>
 #include <string>
 #include "fixieTokenizer.h"
+#include "fixieParser.h"
 
 #define TESTING 1
 
@@ -37,6 +38,11 @@ int main(int argc, char **argv) {
                 std::cout << tokens->at(i).lineNumber << ": " << tokens->at(i).string << std::endl;
             }
         }
+
+        //Set up the parser
+
+        FixieParser *parser = new FixieParser();
+        parser->parse(tokens);
     }
     else {
         std::cout << "Bad file." << std::endl;
