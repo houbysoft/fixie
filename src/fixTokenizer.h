@@ -8,7 +8,7 @@ class FixieTokenizer {
     public:
         FixieTokenizer(std::string input);
         ~FixieTokenizer() {};
-}
+};
 
 #endif
 
