@@ -32,12 +32,12 @@ int main(int argc, char **argv) {
 
         //If we're testing we read off our line numbers and chunks
 
-        if (TESTING) {
+        #ifdef TESTING
             std::cout << std::endl << "TOKENS LIST:" << std::endl;
             for (int i = 0; i < tokens->size(); i++) {
                 std::cout << tokens->at(i).lineNumber << ": " << tokens->at(i).string << std::endl;
             }
-        }
+        #endif
 
         //Set up the parser
 

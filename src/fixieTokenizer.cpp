@@ -10,7 +10,7 @@ public main(int argc, char** argv) {
 #define INSIDE_MULTILINE_COMMENT 2
 
 /*
- * Basic empty constructor
+ * Sets up persistence for the comment state
  */
 FixieTokenizer::FixieTokenizer() {
 
