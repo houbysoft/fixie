@@ -1,0 +1,33 @@
+int iAmVariable = 0;
+
+//Comment
+
+string iAmString = "Hello";
+
+/* Multiple
+line comments
+are super cool */
+
+class myClass {
+
+    //More comments
+
+    int iAmTypechecking = "Hello";
+
+    function doThings(int param1,string param2) {
+        iAmVariable = param1;
+        iAmString = param2;
+    }
+}
+
+//Inheritance! Yay!
+
+class myOtherClass extends myClass {
+
+    string newClassVariable = "Hello";
+
+    //Test scoping
+
+    this.doThings(iAmVariable,newClassVariable);
+
+}
