@@ -14,7 +14,10 @@ public main(int argc, char** argv) {
  */
 FixieTokenizer::FixieTokenizer() {
 
-    //set up our comment state
+    //set up our comment state so that it can be persistent
+    //across multiple calls to tokenizeLine, so that a '/*'
+    //that we read in one line will continue to effect the
+    //next line read.
 
     commentState = NO_COMMENTS_IN_PROGRESS;
 }
@@ -46,6 +49,10 @@ void FixieTokenizer::tokenizeLine(int lineNumber, std::string input, std::vector
  * Clears out all the comments from a code input
  */
 std::string FixieTokenizer::stripComments(std::string input) {
+
+    // If we were waiting for a newline last line chunk, we're done waiting
+
+    if (commentState == WAITING_FOR_NEWLINE) commentState = NO_COMMENTS_IN_PROGRESS;
 
     // Simple finite state machine for clearing out comments
 
