@@ -16,14 +16,14 @@ class FixieParser {
          * Scopes are the basic object in our parse trees. There's the global scope,
          * which will have children for global function and class scopes.
          */
-        typedef struct {
+        typedef struct scopeStruct {
 
             //Scopes need to know where they sit in the scope tree, so they can
             //search for variables in their parents if they don't find them in this
             //scope
 
-            scope *parent;
-            std::vector<scope *> children;
+            struct scopeStruct *parent;
+            std::vector<struct scopeStruct *> children;
 
             //Variables that have been set in this scope
 
