@@ -18,6 +18,20 @@ void FixieParser::parse(std::vector<FixieTokenizer::token> *tokens) {
         for (int i = 0; i < statements->size(); i++) {
             std::vector<FixieTokenizer::token> statement = statements->at(i); 
             for (int s = 0; s < statement.size(); s++) {
+                if (s == 0) {
+                    if (statement.at(s).string == "int") {
+                        std::cout << "INT DECLARATION: ";
+                    }
+                    if (statement.at(s).string == "string") {
+                        std::cout << "STRING DECLARATION: ";
+                    }
+                    if (statement.at(s).string == "class") {
+                        std::cout << "CLASS DECLARATION: ";
+                    }
+                    if (statement.at(s).string == "function") {
+                        std::cout << "FUNCTION DECLARATION: ";
+                    }
+                }
                 std::cout << statement.at(s).string << " ";
             }
             std::cout << std::endl;
@@ -27,6 +41,7 @@ void FixieParser::parse(std::vector<FixieTokenizer::token> *tokens) {
 
 /*
  * Groups the tokens into statements, eg function/class/variable/loop declaration, or variable assignment
+ * Returns a vector of groups (each group is a vector of tokens)
  */
 std::vector<std::vector<FixieTokenizer::token> > *FixieParser::statementList(std::vector<FixieTokenizer::token> *tokens) {
 
@@ -53,6 +68,5 @@ std::vector<std::vector<FixieTokenizer::token> > *FixieParser::statementList(std
 
     return statements;
 }
-
 
 
