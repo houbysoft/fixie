@@ -4,6 +4,8 @@
 #include <string>
 #include "fixieTokenizer.h"
 
+#define TESTING 1
+
 
 int main(int argc, char **argv) {
 
@@ -42,10 +44,12 @@ int main(int argc, char **argv) {
             tokenizer->tokenizeLine(lineNumber,line,tokens);
         }
 
-        //Here we just read off the result for testing
+        //If we're testing we read off our line numbers and chunks
 
-        for (int i = 0; i < tokens->size(); i++) {
-            std::cout << tokens->at(i).lineNumber << ": " << tokens->at(i).string << std::endl;
+        if (TESTING) {
+            for (int i = 0; i < tokens->size(); i++) {
+                std::cout << tokens->at(i).lineNumber << ": " << tokens->at(i).string << std::endl;
+            }
         }
     }
     else {
