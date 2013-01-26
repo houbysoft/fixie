@@ -14,7 +14,7 @@ void FixieParser::parse(std::vector<FixieTokenizer::token> *tokens) {
     std::vector<std::vector<FixieTokenizer::token> > *statements = statementList(tokens);
 
     #ifdef TESTING
-        std::cout << std::endl << "STATEMENTS LIST:" << std::endl;
+        std::cout << std::endl << "STATEMENTS LIST:" << std::endl << std::endl;
         for (int i = 0; i < statements->size(); i++) {
             std::vector<FixieTokenizer::token> statement = statements->at(i); 
             for (int s = 0; s < statement.size(); s++) {
@@ -68,5 +68,3 @@ std::vector<std::vector<FixieTokenizer::token> > *FixieParser::statementList(std
 
     return statements;
 }
-
-
