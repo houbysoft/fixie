@@ -2,7 +2,7 @@
 
 COPT=-g
 LOPT=-g
-OBJS=fixTokenizer.o main.o
+OBJS=fixieTokenizer.o main.o
 CC=g++
 
 default: crank
