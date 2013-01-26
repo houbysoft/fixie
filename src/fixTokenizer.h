@@ -2,6 +2,10 @@
 #define FIXIETOKENIZER_H
 
 #include <string>
+#include <vector>
+#include <boost/algorithm/string.hpp>
+#include <boost/xpressive/xpressive.hpp>
+#include <iostream>
 
 
 class FixieTokenizer {
