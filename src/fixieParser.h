@@ -33,9 +33,21 @@ class FixieParser {
             struct scope *parent;
             std::vector<struct scope *> *children;
 
-            //Variables that have been set in this scope
+            //Parameters used to call this scope
+
+            std::vector<variable *> *parameters;
+
+            //Variables in this scope
 
             std::vector<variable *> *variables;
+
+            //Parameter statements
+
+            std::vector<FixieTokenizer::token> *parameterStatement;
+
+            //Statements in this scope
+
+            std::vector<std::vector<FixieTokenizer::token> > *statements;
 
             //Define scope type
 
@@ -63,7 +75,12 @@ class FixieParser {
         /*
          * Returns the global scope, with pointers to all the other scopes
          */
-        scope *buildScope(std::vector<std::vector<FixieTokenizer::token> > *statements);
+        scope *buildScopes(std::vector<std::vector<FixieTokenizer::token> > *statements, std::vector<error> *errors);
+
+        /*
+         * Creates all the variable in every scope
+         */
+        void processVars(scope *globalScope, std::vector<error> *errors);
 
         /*
          * Adds an error to our error message list
@@ -73,7 +90,7 @@ class FixieParser {
         /*
          * Debugs all the data in our scope tree
          */
-        void recursivelyDebugScope(scope *debugScope);
+        void recursivelyDebugScope(scope *debugScope, int scopeLevel);
 
         /*
          * Helper function to properly initialize a new scope

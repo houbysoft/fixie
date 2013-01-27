@@ -8,7 +8,7 @@ string iAmString = "Hello";
 line comments
 are super cool */
 
-class myClass {
+class myClass(int parameter1) {
 
     //More comments
 
@@ -20,9 +20,9 @@ class myClass {
     }
 }
 
-//Inheritance! Yay!
+//Another class
 
-class myOtherClass extends myClass {
+class myOtherClass() {
 
     string newClassVariable = "Hello";
 

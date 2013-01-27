@@ -1,6 +1,9 @@
 #include "fixieParser.h"
 #define TESTING 1
 
+#define SCOPE_CLASS 0
+#define SCOPE_FUNCTION 1
+
 /*
  * Basic empty constructor
  */
@@ -12,19 +15,27 @@ FixieParser::FixieParser() {
  */
 void FixieParser::parse(std::vector<FixieTokenizer::token> *tokens) {
     std::vector<std::vector<FixieTokenizer::token> > *statements = statementList(tokens);
-    scope *globalScope = buildScope(statements);
+    std::vector<FixieParser::error> *errors = new std::vector<FixieParser::error>();
+    scope *globalScope = buildScopes(statements,errors);
     #ifdef TESTING
-       recursivelyDebugScope(globalScope); 
+        std::cout<<"first pass scoping:"<<std::endl;
+       recursivelyDebugScope(globalScope,0); 
     #endif
 }
 
-void FixieParser::recursivelyDebugScope(FixieParser::scope *debugScope) {
+void FixieParser::recursivelyDebugScope(FixieParser::scope *debugScope, int scopeLevel) {
+    for (int p = 0; p < scopeLevel; p++) {
+        std::cout << "   ";
+    }
     std::cout << "SCOPE: " << debugScope->name << std::endl;
     for (int i = 0; i < debugScope->variables->size(); i++) {
-        std::cout << "VAR: " << debugScope->variables->at(i)->name << std::endl;
+        for (int p = 0; p < scopeLevel; p++) {
+            std::cout << "   ";
+        }
+        std::cout << "-VAR: " << debugScope->variables->at(i)->name << std::endl;
     }
     for (int i = 0; i < debugScope->children->size(); i++) {
-        recursivelyDebugScope(debugScope->children->at(i));
+        recursivelyDebugScope(debugScope->children->at(i), scopeLevel+1);
     }
 }
 
@@ -73,27 +84,30 @@ void FixieParser::addError(std::vector<FixieParser::error> *errors, std::string 
 FixieParser::scope *FixieParser::freshScope() {
     scope *newScope = new scope;
     newScope->children = new std::vector<scope* >();
+
+    //Storing these lets us slowly knock statements out as they are processed in different passes
+    //These get filled in buildScopes, and are whittled away at after that
+
+    newScope->parameterStatement = new std::vector<FixieTokenizer::token>();
+    newScope->statements = new std::vector<std::vector<FixieTokenizer::token> >();
+
+    //These help us do type checking for everything
+
     newScope->variables = new std::vector<variable* >();
+    newScope->parameters = new std::vector<variable* >();
     return newScope;
 }
 
 /*
  * Builds the scope tree from a list of statements
  */
-FixieParser::scope *FixieParser::buildScope(std::vector<std::vector<FixieTokenizer::token> > *statements) {
-
-    //Set up an array to hold errors
-
-    std::vector<error> *errors = new std::vector<error>;
+FixieParser::scope *FixieParser::buildScopes(std::vector<std::vector<FixieTokenizer::token> > *statements, std::vector<FixieParser::error> *errors) {
 
     //Set up the global scope
 
     scope *globalScope = freshScope();
+    globalScope->name = "GLOBAL";
     scope *currentScope = globalScope;
-
-    //Debug scope level
-
-    int scopeLevel = 0;
 
     //Loop through the statements
 
@@ -104,10 +118,11 @@ FixieParser::scope *FixieParser::buildScope(std::vector<std::vector<FixieTokeniz
 
         if (statement.at(0).string == "class" || statement.at(0).string == "function") {
 
-            //Basic class declaration syntax check
+            //Basic scope declaration syntax check
 
-            if (statement.size() < 3) {
-                addError(errors,"Incomplete Scope Declaration",statement.at(0).lineNumber);
+            if (statement.size() < 5) {
+                addError(errors,"Incomplete scope declaration",statement.at(0).lineNumber);
+                continue;
             }
 
             //We'll create a new scope for classes and functions
@@ -117,6 +132,25 @@ FixieParser::scope *FixieParser::buildScope(std::vector<std::vector<FixieTokeniz
             //Add name to our scope
 
             newScope->name = statement.at(1).string;
+
+            //Check syntax
+
+            if (statement.at(2).string != "(") {
+                addError(errors,"Missing '(' in scope delcaration",statement.at(0).lineNumber);
+            }
+
+            //Read off parameters of our scope
+
+            int readParameterStatement = 3;
+            while (true) {
+                if (readParameterStatement >= statement.size()) {
+                    addError(errors,"Missing ')' in scope declaration",statement.at(0).lineNumber);
+                    break;
+                }
+                if (statement.at(readParameterStatement).string == ")") break;
+                newScope->parameterStatement->push_back(statement.at(readParameterStatement));
+                readParameterStatement++;
+            }
 
             //Insert it in the scope trie
 
@@ -132,15 +166,15 @@ FixieParser::scope *FixieParser::buildScope(std::vector<std::vector<FixieTokeniz
         }
         else {
             
-            //Check if we've encountered a variable declaration
-            
-            if (statement.at(0).string == "int" || statement.at(0).string == "string") {
-                variable *newVariable = new variable;
-                newVariable->name = statement.at(1).string;
-                currentScope->variables->push_back(newVariable);
-            }
+            //Add the statement to the scope's statement list to be processed in another pass
+
+            currentScope->statements->push_back(statement);
         }
     }
 
     return globalScope;
+}
+
+void FixieParser::processVars(FixieParser::scope *globalScope, std::vector<FixieParser::error> *errors) {
+
 }
