@@ -12,31 +12,20 @@ FixieParser::FixieParser() {
  */
 void FixieParser::parse(std::vector<FixieTokenizer::token> *tokens) {
     std::vector<std::vector<FixieTokenizer::token> > *statements = statementList(tokens);
-
+    scope *globalScope = buildScope(statements);
     #ifdef TESTING
-        std::cout << std::endl << "STATEMENTS LIST:" << std::endl << std::endl;
-        for (int i = 0; i < statements->size(); i++) {
-            std::vector<FixieTokenizer::token> statement = statements->at(i); 
-            for (int s = 0; s < statement.size(); s++) {
-                if (s == 0) {
-                    if (statement.at(s).string == "int") {
-                        std::cout << "INT DECLARATION: ";
-                    }
-                    if (statement.at(s).string == "string") {
-                        std::cout << "STRING DECLARATION: ";
-                    }
-                    if (statement.at(s).string == "class") {
-                        std::cout << "CLASS DECLARATION: ";
-                    }
-                    if (statement.at(s).string == "function") {
-                        std::cout << "FUNCTION DECLARATION: ";
-                    }
-                }
-                std::cout << statement.at(s).string << " ";
-            }
-            std::cout << std::endl;
-        }
+       recursivelyDebugScope(globalScope); 
     #endif
+}
+
+void FixieParser::recursivelyDebugScope(FixieParser::scope *debugScope) {
+    std::cout << "SCOPE: " << debugScope->name << std::endl;
+    for (int i = 0; i < debugScope->variables->size(); i++) {
+        std::cout << "VAR: " << debugScope->variables->at(i)->name << std::endl;
+    }
+    for (int i = 0; i < debugScope->children->size(); i++) {
+        recursivelyDebugScope(debugScope->children->at(i));
+    }
 }
 
 /*
@@ -67,4 +56,91 @@ std::vector<std::vector<FixieTokenizer::token> > *FixieParser::statementList(std
     }
 
     return statements;
+}
+
+/*
+ * Adds an error to our error list
+ */
+void FixieParser::addError(std::vector<FixieParser::error> *errors, std::string message, int lineNumber) {
+    error *newError = new error;
+    newError->message = message;
+    newError->lineNumber = lineNumber;
+}
+
+/*
+ * Creates a fresh scope, properly initialized
+ */
+FixieParser::scope *FixieParser::freshScope() {
+    scope *newScope = new scope;
+    newScope->children = new std::vector<scope* >();
+    newScope->variables = new std::vector<variable* >();
+    return newScope;
+}
+
+/*
+ * Builds the scope tree from a list of statements
+ */
+FixieParser::scope *FixieParser::buildScope(std::vector<std::vector<FixieTokenizer::token> > *statements) {
+
+    //Set up an array to hold errors
+
+    std::vector<error> *errors = new std::vector<error>;
+
+    //Set up the global scope
+
+    scope *globalScope = freshScope();
+    scope *currentScope = globalScope;
+
+    //Debug scope level
+
+    int scopeLevel = 0;
+
+    //Loop through the statements
+
+    for (int i = 0; i < statements->size(); i++) {
+        std::vector<FixieTokenizer::token> statement = statements->at(i); 
+        
+        //Check the first word of the statement to see how we should respond
+
+        if (statement.at(0).string == "class" || statement.at(0).string == "function") {
+
+            //Basic class declaration syntax check
+
+            if (statement.size() < 3) {
+                addError(errors,"Incomplete Scope Declaration",statement.at(0).lineNumber);
+            }
+
+            //We'll create a new scope for classes and functions
+
+            scope *newScope = freshScope();
+
+            //Add name to our scope
+
+            newScope->name = statement.at(1).string;
+
+            //Insert it in the scope trie
+
+            newScope->parent = currentScope;
+            currentScope->children->push_back(newScope);
+            currentScope = newScope;
+        }
+        else if (statement.at(0).string == "}") {
+
+            //Backtrack up the scoping hierarchy
+
+            currentScope = currentScope->parent;
+        }
+        else {
+            
+            //Check if we've encountered a variable declaration
+            
+            if (statement.at(0).string == "int" || statement.at(0).string == "string") {
+                variable *newVariable = new variable;
+                newVariable->name = statement.at(1).string;
+                currentScope->variables->push_back(newVariable);
+            }
+        }
+    }
+
+    return globalScope;
 }
