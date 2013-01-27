@@ -13,17 +13,25 @@ class FixieParser {
         void parse(std::vector<FixieTokenizer::token> *tokens);
 
         /*
+         * Variable struct for declared variables
+         */
+        typedef struct variable {
+            std::string name;
+            int type;
+        } variable;
+
+        /*
          * Scopes are the basic object in our parse trees. There's the global scope,
          * which will have children for global function and class scopes.
          */
-        typedef struct scopeStruct {
+        typedef struct scope {
 
             //Scopes need to know where they sit in the scope tree, so they can
             //search for variables in their parents if they don't find them in this
             //scope
 
-            struct scopeStruct *parent;
-            std::vector<struct scopeStruct *> children;
+            struct scope *parent;
+            std::vector<struct scope *> children;
 
             //Variables that have been set in this scope
 
