@@ -25,9 +25,6 @@ class myClass(int parameter1) {
 class myOtherClass() {
 
     string newClassVariable = "Hello";
-
-    //Test scoping
-
-    this.doThings(iAmVariable,newClassVariable);
+    myClass object(1);
 
 }

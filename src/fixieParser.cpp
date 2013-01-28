@@ -14,6 +14,9 @@ FixieParser::FixieParser() {
  * Parses a string of tokens into a tree format
  */
 void FixieParser::parse(std::vector<FixieTokenizer::token> *tokens) {
+
+    //Parses the input vector of tokens
+
     std::vector<std::vector<FixieTokenizer::token> > *statements = statementList(tokens);
     std::vector<FixieParser::error> *errors = new std::vector<FixieParser::error>();
     scope *globalScope = buildScopes(statements,errors);
@@ -23,6 +26,9 @@ void FixieParser::parse(std::vector<FixieTokenizer::token> *tokens) {
     #endif
 }
 
+/*
+ * Debugs this scope, and all the children of it
+ */
 void FixieParser::recursivelyDebugScope(FixieParser::scope *debugScope, int scopeLevel) {
     for (int p = 0; p < scopeLevel; p++) {
         std::cout << "   ";
@@ -152,6 +158,11 @@ FixieParser::scope *FixieParser::buildScopes(std::vector<std::vector<FixieTokeni
                 readParameterStatement++;
             }
 
+            //Set our scope type
+
+            if (statement.at(0).string == "class") newScope->type = SCOPE_CLASS;
+            else newScope->type = SCOPE_FUNCTION;
+
             //Insert it in the scope trie
 
             newScope->parent = currentScope;
@@ -175,6 +186,39 @@ FixieParser::scope *FixieParser::buildScopes(std::vector<std::vector<FixieTokeni
     return globalScope;
 }
 
-void FixieParser::processVars(FixieParser::scope *globalScope, std::vector<FixieParser::error> *errors) {
+/*
+ * First pass of refinement on the scope tree, we now process all the parameters we didn't touch
+ * earlier.
+ */
+void FixieParser::processParametersRecursive(FixieParser::scope *processScope, std::vector<FixieParser::error> *errors) {
+    for (int i = 0; i < processScope->parameterStatement->size(); i++) {
+        
+    }
+    for (int i = 0; i < processScope->children->size(); i++) {
+        processParametersRecursive(processScope->children->at(i));
+    }
+}
 
+/*
+ * Second pass of refinement on the scope tree, we now process all the variable declarations to check for type safety.
+ */
+void FixieParser::processVariableDeclarationsRecursive(FixieParser::scope *processScope, std::vector<FixieParser::error> *errors) {
+    for (int i = 0; i < processScope->parameterStatement->size(); i++) {
+        
+    }
+    for (int i = 0; i < processScope->children->size(); i++) {
+        processVariableDeclarationsRecursive(processScope->children->at(i));
+    }
+}
+
+/*
+ * Third pass of refinement on the scope tree, we now process all the variable assignments to check for type safety
+ */
+void FixieParser::processVariablesRecursive(FixieParser::scope *processScope, std::vector<FixieParser::error> *errors) {
+    for (int i = 0; i < processScope->parameterStatement->size(); i++) {
+        
+    }
+    for (int i = 0; i < processScope->children->size(); i++) {
+        processVariablesRecursive(processScope->children->at(i));
+    }
 }

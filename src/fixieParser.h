@@ -51,7 +51,7 @@ class FixieParser {
 
             //Define scope type
 
-            int scopeType;
+            int type;
 
             //Scope name
 
@@ -80,7 +80,9 @@ class FixieParser {
         /*
          * Creates all the variable in every scope
          */
-        void processVars(scope *globalScope, std::vector<error> *errors);
+        void processParametersRecursive(scope *globalScope, std::vector<error> *errors);
+        void processVariableDeclarationsRecursive(scope *processScope, std::vector<error> *errors) {
+        void processVariablesRecursive(scope *processScope, std::vector<error> *errors) {
 
         /*
          * Adds an error to our error message list
